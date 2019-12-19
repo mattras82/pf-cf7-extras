@@ -37,20 +37,6 @@ class Config extends RunableAbstract
 			'pf_cf7_user_info',
 			'general'
 		);
-		add_settings_field(
-			Geolocation::ENABLED,
-			'Enable Geolocation Endpoint',
-			array($this, 'render_enable_geolocation_endpoint'),
-			'pf_cf7_user_info',
-			'general'
-		);
-		add_settings_field(
-			Geolocation::ENDPOINT,
-			'Geolocation Endpoint',
-			array($this, 'render_geolocation_endpoint'),
-			'pf_cf7_user_info',
-			'general'
-		);
 	}
 
 	public function render_options_page() {
@@ -78,18 +64,6 @@ class Config extends RunableAbstract
                 <option value='1' ".($enabled ? 'selected' : '').">Yes</option>
                 <option value='0' ".($enabled ? '' : 'selected').">No</option>
             </select>";
-	}
-
-	public function render_enable_geolocation_endpoint(){
-		$enabled = boolval($this->get_config('enable_geolocation_endpoint'));
-		echo "<select name='".self::CONFIG_NAME."[enable_geolocation_endpoint]'>
-                <option value='1' ".($enabled ? 'selected' : '').">Yes</option>
-                <option value='0' ".($enabled ? '' : 'selected').">No</option>
-            </select>";
-	}
-
-	public function render_geolocation_endpoint(){
-		echo '<input type="text" id="ppc_keyword" name="'.self::CONFIG_NAME.'[geolocation_endpoint]" value="'.$this->get_config('geolocation_endpoint').'">';
 	}
 
 	/**

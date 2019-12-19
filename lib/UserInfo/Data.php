@@ -74,7 +74,6 @@ class Data extends RunableAbstract
 	 */
 	public function alter_db_save_data($form) {
 		$form->posted_data['user_path'] = $this->get_visited_path();
-		$form->posted_data['user_ip'] = $this->get_geolocation();
 		return $form;
 	}
 
@@ -97,15 +96,6 @@ class Data extends RunableAbstract
 	 */
 	public function get_ppc_value() {
 		return isset($_SESSION[self::PPC_SESSION_NAME]) ? $_SESSION[self::PPC_SESSION_NAME] : null;
-	}
-
-	/**
-	 * @since   1.0.0
-	 * @param   bool $html
-	 * @return  string
-	 */
-	public function get_geolocation($html = false) {
-		return (new Geolocation($html))->get_location();
 	}
 
 	/**

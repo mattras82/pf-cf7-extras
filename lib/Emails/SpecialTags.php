@@ -21,19 +21,27 @@ class SpecialTags extends RunableAbstract
 	 * @param $html
 	 * @return false|string
 	 */
-    public function customTags( $output, $tagname, $html)
-    {
-        if($tagname === '_year')
-            $output = date('Y');
+	public function customTags($output, $tagname, $html)
+	{
+		$tags = array(
+			[
+				'name' => '_year',
+				'output' => date('Y')
+			],
+			[
+		    	'name' => 'user_path',
+				'output' => $this->get('user_info_data')->get_user_path_html()
+			]
+		);
+		$tags = apply_filters('gc_cf7_mail_tags', $tags);
 
-        if ($tagname === 'user_ip')
-        	$output = $this->get('user_info_data')->get_geolocation(true);
+		foreach ($tags as $tag) {
+			if (isset($tag['name']) && isset($tag['output']) && $tagname === $tag['name'])
+				return $tag['output'];
+		}
 
-        if($tagname === 'user_path')
-        	$output = $this->get('user_info_data')->get_user_path_html();
-
-        return $output;
-    }
+		return $output;
+	}
 
 	/**
 	 * @since   1.0.0
@@ -42,18 +50,18 @@ class SpecialTags extends RunableAbstract
 	 * @param $html
 	 * @return string
 	 */
-    public function formatArray($formatted, $submitted, $html)
-    {
-        if (is_array($submitted) && is_callable('pf_formatted_list'))
-            $formatted = pf_formatted_list($submitted);
+	public function formatArray($formatted, $submitted, $html)
+	{
+		if (is_array($submitted) && is_callable('pf_formatted_list'))
+			$formatted = pf_formatted_list($submitted);
 
-        return $formatted;
-    }
+		return $formatted;
+	}
 
-    public function run()
-    {
-        $this->loader()->addFilter('wpcf7_special_mail_tags', [$this, 'customTags'], 20, 3);
+	public function run()
+	{
+		$this->loader()->addFilter('wpcf7_special_mail_tags', [$this, 'customTags'], 20, 3);
 
-        $this->loader()->addFilter('wpcf7_mail_tag_replaced', [$this, 'formatArray'], 20, 3);
-    }
+		$this->loader()->addFilter('wpcf7_mail_tag_replaced', [$this, 'formatArray'], 20, 3);
+	}
 }

@@ -49,7 +49,7 @@ class Plugin
 			    'short_name' => 'pf-cf7-extras',
 			    'directory' => $_plugin_dir,
 			    'path' => $_plugin_path,
-			    'version' => '1.0.0',
+			    'version' => '1.0.1',
 			    'config_path' => $_plugin_path . 'config/',
 
 			    // Asset paths and directories
@@ -111,7 +111,7 @@ class Plugin
 
 		    'textdomain' => $this->container->get('plugin.short_name'),
 
-		    'wpcf7_includes' => null,
+		    'wpcf7_includes' => $this->config['wpcf7_includes'],
 
 		    'loader' => function () {
 			    return new Loader();
@@ -133,9 +133,6 @@ class Plugin
 		    },
 		    'user_info_data' => function (Container &$c) {
 			    return new UserInfo\Data($c);
-		    },
-		    'geolocation' => function (Container &$c) {
-			    return new UserInfo\Geolocation($c);
 		    },
 		    'config' => function (Container &$c) {
 			    return new UserInfo\Config($c);
