@@ -50,7 +50,6 @@ class PostedData extends RunableAbstract
 	 */
 	public function alterDbSaveData($form) {
 		$form->posted_data['user_path'] = $this->get('user_info_data')->get_visited_path();
-		$form->posted_data['user_ip'] = $this->get('user_info_data')->get_geolocation();
 		return $form;
 	}
 

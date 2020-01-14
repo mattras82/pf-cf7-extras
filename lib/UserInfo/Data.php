@@ -170,8 +170,7 @@ class Data extends RunableAbstract
 
 	public function run()
 	{
-
-		$this->loader()->addAction('plugins_loaded', [$this, 'wpse_session_start']);
+		$this->wpse_session_start();
 		$this->loader()->addAction('parse_request', [$this, 'save_referrer_in_session']);
 		$this->loader()->addAction('parse_request', [$this, 'save_ppc_value_in_session']);
 		$this->loader()->addAction('wp_head', [$this, 'save_uri_in_session']);
