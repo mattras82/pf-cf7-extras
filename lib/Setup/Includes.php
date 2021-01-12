@@ -13,7 +13,7 @@ class Includes extends RunableAbstract
 
 	private $addedResources;
 
-	public function __construct(Container $c)
+	public function __construct(Container &$c)
 	{
 		parent::__construct($c);
 

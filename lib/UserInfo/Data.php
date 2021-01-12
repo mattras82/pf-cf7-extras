@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Matthew Rasmussen
- * Date: 5/28/2019
- * Time: 4:31 PM
- */
 
 namespace PublicFunction\Cf7Extras\UserInfo;
 
@@ -20,16 +14,32 @@ class Data extends RunableAbstract
 	 * Saves the URI to the visited path session variable.
 	 * @since   1.0.0
 	 */
-	public function save_uri_in_session() {
+	public function save_uri_in_session()
+	{
 		global $wp_the_query;
 
-		$blacklist = array('/offline');
-		$process = true;
+		$ref_blacklist = array('/sw.js');
+        $blacklist = array('/offline.html');
+        $process = true;
 
-		foreach ($blacklist as $word) {
-			if (strpos($_SERVER['REQUEST_URI'], $word) === 0) {
-				$process = false;
-			}
+        /* Referrer Blacklist Check */
+        if (isset($_SERVER['HTTP_REFERER'])) {
+            foreach ($ref_blacklist as $word) {
+                if ((strpos($_SERVER['HTTP_REFERER'], $word) !== false)) {
+                    $process = false;
+                }
+            }
+        }
+
+        /* Request URI Blacklist Check */
+        foreach ($blacklist as $word) {
+            if (strpos($_SERVER['REQUEST_URI'], $word) === 0) {
+                $process = false;
+            }
+        }
+
+		if (isset($_SERVER['HTTP_SEC_FETCH_MODE']) && $_SERVER['HTTP_SEC_FETCH_MODE'] !== 'navigate') {
+			$process = false;
 		}
 
 		if ($process) {
@@ -46,8 +56,9 @@ class Data extends RunableAbstract
 	/**
 	 * @since   1.0.0
 	 */
-	public function save_referrer_in_session() {
-		if (!isset($_SESSION['HTTP_REFERER']) && isset($_SERVER['HTTP_REFERER'])) {
+	public function save_referrer_in_session()
+	{
+		if (!empty($_SERVER['HTTP_REFERER'])) {
 			$_SESSION['HTTP_REFERER'] = $_SERVER['HTTP_REFERER'];
 		}
 	}
@@ -55,11 +66,13 @@ class Data extends RunableAbstract
 	/**
 	 * @since   1.0.0
 	 */
-	public function save_ppc_value_in_session() {
+	public function save_ppc_value_in_session()
+	{
 		$ppc_keyword = $this->get('config')->get_config('ppc_keyword');
 
-		if ($ppc_keyword
-			&& isset($_GET[$ppc_keyword])
+		if (
+			$ppc_keyword
+			&& !empty($_GET[$ppc_keyword])
 			&& !isset($_SESSION[self::PPC_SESSION_NAME])
 		) {
 			$_SESSION[self::PPC_SESSION_NAME] = $_GET[$ppc_keyword];
@@ -72,7 +85,8 @@ class Data extends RunableAbstract
 	 * @param $form
 	 * @return mixed
 	 */
-	public function alter_db_save_data($form) {
+	public function alter_db_save_data($form)
+	{
 		$form->posted_data['user_path'] = $this->get_visited_path();
 		return $form;
 	}
@@ -81,20 +95,25 @@ class Data extends RunableAbstract
 	 * @since   1.0.0
 	 * @return  string
 	 */
-	public function get_referrer() {
-		$host = $_SERVER['HTTP_HOST'];
-		$referrer = parse_url($_SESSION['HTTP_REFERER'], PHP_URL_HOST);
-
-		return $host === $referrer
-			? ''
-			: $_SESSION['HTTP_REFERER'];
+	public function get_referrer()
+	{
+		if (!empty($_SESSION['HTTP_REFERER'])) {
+			$host = $_SERVER['HTTP_HOST'];
+			$referrer = parse_url($_SESSION['HTTP_REFERER'], PHP_URL_HOST);
+	
+			return $host === $referrer
+				? ''
+				: $_SESSION['HTTP_REFERER'];
+		}
+		return '';
 	}
 
 	/**
 	 * @since   1.0.0
 	 * @return  string|null
 	 */
-	public function get_ppc_value() {
+	public function get_ppc_value()
+	{
 		return isset($_SESSION[self::PPC_SESSION_NAME]) ? $_SESSION[self::PPC_SESSION_NAME] : null;
 	}
 
@@ -102,7 +121,8 @@ class Data extends RunableAbstract
 	 * @since   1.0.0
 	 * @return  string
 	 */
-	public function get_visited_path() {
+	public function get_visited_path()
+	{
 		return isset($_SESSION['VISITED_PATH']) ? $_SESSION['VISITED_PATH'] : 'Visited path is not set';
 	}
 
@@ -111,7 +131,8 @@ class Data extends RunableAbstract
 	 * Converts visited path into html block for email.
 	 * @return  string
 	 */
-	public function get_user_path_html() {
+	public function get_user_path_html()
+	{
 		$elements = array();
 		$path = $this->get_visited_path();
 
@@ -132,7 +153,8 @@ class Data extends RunableAbstract
 	 * @since   1.0.0
 	 * @return  mixed
 	 */
-	public function uri_exists() {
+	public function uri_exists()
+	{
 		return !empty($_SERVER['REQUEST_URI']);
 	}
 
@@ -141,7 +163,8 @@ class Data extends RunableAbstract
 	 * @param   string $uri
 	 * @return  null|string
 	 */
-	public function visitor_path_link($uri) {
+	public function visitor_path_link($uri)
+	{
 		return '<a href="' . $this->build_url($uri) . '">' . $uri . '</a>';
 	}
 
@@ -151,7 +174,8 @@ class Data extends RunableAbstract
 	 * @param   string $query
 	 * @return  string
 	 */
-	public function build_url($uri = '', $query = '') {
+	public function build_url($uri = '', $query = '')
+	{
 		$protocol = $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
 		$host = $_SERVER['HTTP_HOST'];
 
@@ -162,10 +186,13 @@ class Data extends RunableAbstract
 	 * Initiates browser session
 	 * @since   1.0.0
 	 */
-	public function wpse_session_start() {
-		if (!session_id()) {
-			session_start();
-		}
+	public function wpse_session_start()
+	{
+		if ((!defined('DOING_CRON') || !DOING_CRON) 
+			&& (!defined('REST_REQUEST') || !REST_REQUEST)
+			&& !session_id()) {
+            @session_start();
+        }
 	}
 
 	public function run()
@@ -175,5 +202,4 @@ class Data extends RunableAbstract
 		$this->loader()->addAction('parse_request', [$this, 'save_ppc_value_in_session']);
 		$this->loader()->addAction('wp_head', [$this, 'save_uri_in_session']);
 	}
-
 }
