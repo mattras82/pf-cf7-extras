@@ -49,7 +49,7 @@ class Plugin
 				'short_name' => 'pf-cf7-extras',
 				'directory' => $_plugin_dir,
 				'path' => $_plugin_path,
-				'version' => '1.0.3',
+				'version' => '1.0.4',
 				'config_path' => $_plugin_path . 'config/',
 
 				// Asset paths and directories

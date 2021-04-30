@@ -35,6 +35,10 @@ class SpecialTags extends RunableAbstract
 			[
 				'name' => 'user_referrer',
 				'output' => $this->get('user_info_data')->get_referrer()
+			],
+			[
+				'name' => 'user_ppc',
+				'output' => $this->get('user_info_data')->get_ppc_value()
 			]
 		);
 		$tags = apply_filters('pf_cf7_mail_tags', $tags);

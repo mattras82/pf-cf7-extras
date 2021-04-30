@@ -25,14 +25,19 @@ class UploadPath extends RunableAbstract
     public function CFDB_filter($formData)
     {
         if (!empty($formData->uploaded_files)) {
-            foreach($formData->uploaded_files as $key => $file) {
-                $file_pieces = pathinfo($file);
-				$guid = uniqid();
-				$newfile = $this->get_upload_dir().'/'.$guid.'.'.$file_pieces['extension'];
-				$formData->$key = $guid.'.'.$file_pieces['extension'];
-				$formData->posted_data[$key]= $guid.'.'.$file_pieces['extension'];
-
-				copy($file, $newfile);
+            foreach($formData->uploaded_files as $key => $files) {
+                $paths = (array) $files;
+                foreach ($paths as $file) {
+                    $file_pieces = pathinfo($file);
+                    $guid = uniqid();
+                    $newfile = $this->get_upload_dir().'/'.$guid.'.'.$file_pieces['extension'];
+                    if (!is_array($formData->key)) $formData->key = array();
+                    $formData->$key[] = $guid.'.'.$file_pieces['extension'];
+                    if (!is_array($formData->posted_data[$key])) $formData->posted_data[$key] = array();
+                    $formData->posted_data[$key][] = $guid.'.'.$file_pieces['extension'];
+    
+                    copy($file, $newfile);
+                }
             }
             $formData->uploaded_files = [];
         }

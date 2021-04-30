@@ -8,6 +8,8 @@ use PublicFunction\Cf7Extras\Core\RunableAbstract;
 class Validation extends RunableAbstract
 {
 
+    private $multiple_email_values = [];
+
     /**
      * @since   1.0.0
      * @param \WPCF7_Validation $result
