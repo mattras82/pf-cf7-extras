@@ -18,6 +18,15 @@ Shortcodes are added for easy display of the additional values in CF7 email temp
 
 == Changelog ==
 
+= 1.0.5 =
+
+Released on 28 Jul 2022
+
+ - Warning Fix: Fixing PHP 8.0 warning in SingletonTrait.php
+ - Fix: CF7 plugin changed how form properties are constructed, so our PF Settings page has been updated accordingly
+ - Enhancement: Adding ability to change the PF Settings title
+ - Bug Fix: Fixing display attribute bug in Settings.php
+
 = 1.0.4 =
 
 Released on 29 Apr 2021

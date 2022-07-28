@@ -23,12 +23,18 @@ class Settings extends RunableAbstract
         return apply_filters('pf_cf7_extras_settings', $this->settings);
     }
 
+    protected function get_title()
+    {
+        return apply_filters('pf_cf7_extras_settings_title', __('PF Settings', $this->get('textdomain')));
+    }
+
     public function add_properties($properties, \WPCF7_ContactForm $form)
     {
         foreach ($this->get_settings() as $key => $prop) {
-            if (!isset($properties[$key]) || isset($_POST[$key])) {
-                $properties[$key] = isset($_POST[$key]) ? $_POST[$key] : '';
-            }
+            $properties[$key] = '';
+            add_filter("wpcf7_contact_form_property_$key", function($val) use ($key) {
+                return isset($_POST[$key]) ? $_POST[$key] : $val;
+            });
         }
         return $properties;
     }
@@ -36,7 +42,7 @@ class Settings extends RunableAbstract
     public function add_editor($panels)
     {
         $panels['pf-settings'] = [
-            'title' => __('PF Settings', $this->get('textdomain')),
+            'title' => $this->get_title(),
             'callback' => [$this, 'display_editor']
         ];
         return $panels;
@@ -45,9 +51,9 @@ class Settings extends RunableAbstract
     public function display_editor(\WPCF7_ContactForm $form)
     {
 ?>
-        <h2><?= esc_html(__('PF Settings', $this->get('textdomain'))) ?></h2>
+        <h2><?= esc_html($this->get_title()) ?></h2>
         <fieldset>
-            <legend>You can customize the settings below that correspond to PublicFunction's Contact Form Standards.</legend>
+            <legend>You can customize the settings below that apply to this contact form.</legend>
             <?php foreach ($this->get_settings() as $id => $setting) {
                 if (isset($setting['display'])) {
                     if (is_callable($setting['display'])) {
@@ -86,9 +92,9 @@ class Settings extends RunableAbstract
             }
         }
         $attributes = '';
-        foreach ($attr as $a => $value) {
-            $value = esc_attr__($value, $this->get('textdomain'));
-            $attributes .= " {$a}=\"{$value}\"";
+        foreach ($attr as $a => $v) {
+            $v = esc_attr__($v, $this->get('textdomain'));
+            $attributes .= " {$a}=\"{$v}\"";
         }
         $this->display_setting(
             $id,
@@ -129,9 +135,9 @@ class Settings extends RunableAbstract
             }
         }
         $attributes = '';
-        foreach ($attr as $a => $value) {
-            $value = esc_attr__($value, $this->get('textdomain'));
-            $attributes .= " {$a}=\"{$value}\"";
+        foreach ($attr as $a => $v) {
+            $v = esc_attr__($v, $this->get('textdomain'));
+            $attributes .= " {$a}=\"{$v}\"";
         }
         $this->display_setting(
             $id,
@@ -171,7 +177,7 @@ class Settings extends RunableAbstract
 
     public function run()
     {
-        $this->loader()->addFilter('wpcf7_contact_form_properties', [$this, 'add_properties'], 10, 2);
+        $this->loader()->addFilter('wpcf7_pre_construct_contact_form_properties', [$this, 'add_properties'], 10, 2);
         $this->loader()->addFilter('wpcf7_editor_panels', [$this, 'add_editor']);
         $this->loader()->addAction('wpcf7_mail_sent', [$this, 'handle_redirect']);
         $this->loader()->addFilter('wpcf7_form_response_output', [$this, 'add_redirect_script'], 10, 5);

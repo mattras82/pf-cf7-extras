@@ -32,17 +32,17 @@ trait SingletonTrait
     private function __clone() { }
 
     /**
-     * Private unserialize method to prevent unserializing of the *SingletonInterface*
+     * Pre-unserialize method to prevent unserializing of the *SingletonInterface*
      * instance.
      *
      * @return void
      */
-    private function __wakeup() { }
+    public function __wakeup() { }
 
     /**
-     * Private serialize method to prevent serializing of the *SingletonInterface*
+     * Pre-serialize method to prevent serializing of the *SingletonInterface*
      *
      * @return void
      */
-    private function __sleep() { }
+    public function __sleep() { }
 }
