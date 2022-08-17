@@ -16,6 +16,8 @@ class Data extends RunableAbstract
 	 */
 	public function save_uri_in_session()
 	{
+		if (!$this->wpse_session_start()) return;
+
 		global $wp_the_query;
 
 		$ref_blacklist = array('/sw.js');
@@ -51,6 +53,8 @@ class Data extends RunableAbstract
 				$_SESSION['VISITED_PATH'] .= PHP_EOL . $_SERVER['REQUEST_URI'];
 			}
 		}
+
+		session_write_close();
 	}
 
 	/**
@@ -151,7 +155,7 @@ class Data extends RunableAbstract
 
 	/**
 	 * @since   1.0.0
-	 * @return  mixed
+	 * @return  bool
 	 */
 	public function uri_exists()
 	{
@@ -183,23 +187,35 @@ class Data extends RunableAbstract
 	}
 
 	/**
+	 * Starts the session, saves PPC & Referrer values, then closes the session
+	 * @since 1.0.6
+	 */
+	public function on_parse_request()
+	{
+		if ($this->wpse_session_start()) {
+			$this->save_ppc_value_in_session();
+			$this->save_referrer_in_session();
+			session_write_close();
+		}
+	}
+
+	/**
 	 * Initiates browser session
 	 * @since   1.0.0
+	 * @return bool
 	 */
 	public function wpse_session_start()
 	{
 		if ((!defined('DOING_CRON') || !DOING_CRON) 
-			&& (!defined('REST_REQUEST') || !REST_REQUEST)
-			&& !session_id()) {
-            @session_start();
+			&& (!defined('REST_REQUEST') || !REST_REQUEST)) {
+            return @session_start();
         }
+		return false;
 	}
 
 	public function run()
 	{
-		$this->wpse_session_start();
-		$this->loader()->addAction('parse_request', [$this, 'save_referrer_in_session']);
-		$this->loader()->addAction('parse_request', [$this, 'save_ppc_value_in_session']);
-		$this->loader()->addAction('wp_head', [$this, 'save_uri_in_session']);
+		$this->loader()->addAction('parse_request', [$this, 'on_parse_request']);
+		$this->loader()->addAction('template_redirect', [$this, 'save_uri_in_session']);
 	}
 }

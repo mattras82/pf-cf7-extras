@@ -16,7 +16,7 @@
  * Plugin Name:       PF CF7 Extras
  * Plugin URI:        https://github.com/mattras82/pf-cf7-extras
  * Description:       This plugin adds validation, special email tags,  IP [user_ip], Referrer URL [user_referrer], User PPC [user_ppc], and Visited Path [user_path] shortcodes for WP CF7 mails.
- * Version:           1.0.5
+ * Version:           1.0.6
  * Author:            Public Function
  * Author URI:        https://github.com/mattas82
  * License:           GPL-3.0+

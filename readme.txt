@@ -18,6 +18,13 @@ Shortcodes are added for easy display of the additional values in CF7 email temp
 
 == Changelog ==
 
+= 1.0.6 =
+
+Released on 17 Aug 2022
+
+ - Fix: Implementing the `session_write_close()` function to fix the WP Site Health issues related to open sessions
+ - Fix: Changing the hook for saving the URI to session data to `template_redirect` so that only front-end requests are evaluated
+
 = 1.0.5 =
 
 Released on 28 Jul 2022

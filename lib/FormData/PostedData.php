@@ -20,7 +20,9 @@ class PostedData extends RunableAbstract
             );
             $filteredData = apply_filters('pf_cf7_data', $data);
             if (isset($filteredData['postedData'])) {
+				@session_start();
                 $_SESSION['PF_POSTED_DATA'] = $filteredData['postedData'];
+				session_write_close();
             }
             if (isset($filteredData['cf7'])) {
                 return $filteredData['cf7'];

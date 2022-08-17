@@ -1,10 +1,17 @@
 # PublicFunction CF7 Extras Plugin #
 
- - Version 1.0.5
+ - Version 1.0.6
  
 ### WordPress plugin for adding additional functionality to the Contact Form 7 plugin. This includes extra validation, dynamic asset enqueueing, custom data sets for form fields, and more. ###
 
 ## Changelog ##
+
+### v.1.0.6
+
+Released on 17 Aug 2022
+
+ - Fix: Implementing the `session_write_close()` function to fix the WP Site Health issues related to open sessions
+ - Fix: Changing the hook for saving the URI to session data to `template_redirect` so that only front-end requests are evaluated
 
 ### v.1.0.5
 
