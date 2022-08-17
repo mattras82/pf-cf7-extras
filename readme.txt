@@ -1,5 +1,5 @@
 === PublicFunction CF7 Extras Plugin ===
-Tested up to: 5.7
+Tested up to: 6.0.1
 Requires at least: 4.8
 License: GPL-3.0+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
