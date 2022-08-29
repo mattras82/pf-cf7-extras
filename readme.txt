@@ -18,6 +18,13 @@ Shortcodes are added for easy display of the additional values in CF7 email temp
 
 == Changelog ==
 
+= 1.0.7 =
+
+Released on 29 Aug 2022
+
+ - Enhancement: Adding `[user_ip]` special mail tag
+ - Other: Adding logic to detect Cloudflare connecting IP & forwarding IP address for proper user IP address
+
 = 1.0.6 =
 
 Released on 17 Aug 2022

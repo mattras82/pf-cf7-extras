@@ -1,10 +1,17 @@
 # PublicFunction CF7 Extras Plugin #
 
- - Version 1.0.6
+ - Version 1.0.7
  
 ### WordPress plugin for adding additional functionality to the Contact Form 7 plugin. This includes extra validation, dynamic asset enqueueing, custom data sets for form fields, and more. ###
 
 ## Changelog ##
+
+### v.1.0.7
+
+Released on 29 Aug 2022
+
+ - Enhancement: Adding `[user_ip]` special mail tag
+ - Other: Adding logic to detect Cloudflare connecting IP & forwarding IP address for proper user IP address
 
 ### v.1.0.6
 
