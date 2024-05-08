@@ -1,5 +1,5 @@
 === PublicFunction CF7 Extras Plugin ===
-Tested up to: 6.0.1
+Tested up to: 6.4
 Requires at least: 4.8
 License: GPL-3.0+
 License URI: http://www.gnu.org/licenses/gpl-3.0.txt
@@ -17,6 +17,12 @@ PPC Keyword tracking can be configured in the settings menu in the WordPress Adm
 Shortcodes are added for easy display of the additional values in CF7 email templates, and this plugin hooks into the [CFDB plugin](https://github.com/mattras82/contact-form-7-to-database-extension) to add the values to the database.
 
 == Changelog ==
+
+= 1.0.8 =
+
+Released on 08 May 2024
+
+ - Bug Fix: Fixing bug introduced in 1.0.6 that closed the session before user info could be read by CFDB plugin
 
 = 1.0.7 =
 

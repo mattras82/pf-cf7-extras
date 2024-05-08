@@ -101,13 +101,15 @@ class Data extends RunableAbstract
 	 */
 	public function get_referrer()
 	{
-		if (!empty($_SESSION['HTTP_REFERER'])) {
+		@session_start(['read_and_close' => true]);
+		$ref = isset($_SESSION['HTTP_REFERER']) ? $_SESSION['HTTP_REFERER'] : '';
+		if ($ref) {
 			$host = $_SERVER['HTTP_HOST'];
-			$referrer = parse_url($_SESSION['HTTP_REFERER'], PHP_URL_HOST);
+			$referrer = parse_url($ref, PHP_URL_HOST);
 	
 			return $host === $referrer
 				? ''
-				: $_SESSION['HTTP_REFERER'];
+				: $ref;
 		}
 		return '';
 	}
@@ -118,6 +120,7 @@ class Data extends RunableAbstract
 	 */
 	public function get_ppc_value()
 	{
+		@session_start(['read_and_close' => true]);
 		return isset($_SESSION[self::PPC_SESSION_NAME]) ? $_SESSION[self::PPC_SESSION_NAME] : null;
 	}
 
@@ -127,6 +130,7 @@ class Data extends RunableAbstract
 	 */
 	public function get_visited_path()
 	{
+		@session_start(['read_and_close' => true]);
 		return isset($_SESSION['VISITED_PATH']) ? $_SESSION['VISITED_PATH'] : 'Visited path is not set';
 	}
 
