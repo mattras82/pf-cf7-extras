@@ -32,7 +32,7 @@ class Container implements ArrayAccess
      * @param string $offset
      * @param mixed $value
      */
-    public function offsetSet( $offset, $value )
+    public function offsetSet( $offset, $value ) : void
     {
         $this->items[$offset] = $value;
     }
@@ -41,7 +41,7 @@ class Container implements ArrayAccess
      * @param string $offset
      * @return mixed|null
      */
-    public function offsetGet( $offset )
+    public function offsetGet( $offset ) : mixed
     {
         if ( !$this->offsetExists( $offset ) )
             return null;
@@ -63,7 +63,7 @@ class Container implements ArrayAccess
      * Removes an item from the container
      * @param string $offset
      */
-    public function offsetUnset( $offset )
+    public function offsetUnset( $offset ) : void
     {
         if ( $this->has( $offset ) )
             unset( $this->items[$offset] );
@@ -74,7 +74,7 @@ class Container implements ArrayAccess
      * @param string $offset
      * @return bool
      */
-    public function offsetExists( $offset )
+    public function offsetExists( $offset ) : bool
     {
         return DotNotation::exists( $offset, $this->items );
     }

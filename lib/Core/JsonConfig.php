@@ -24,23 +24,23 @@ class JsonConfig implements \ArrayAccess
     // Access
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value) : void
     {
         $this->_data[$offset] = $value;
     }
 
-    public function offsetGet($offset)
+    public function offsetGet($offset) : mixed
     {
         return $this->offsetExists($offset) ? $this->_data[$offset] : null;
     }
 
-    public function offsetUnset($offset)
+    public function offsetUnset($offset) : void
     {
         if ( $this->offsetExists( $offset ) )
             unset( $this->_data[$offset] );
     }
 
-    public function offsetExists( $offset )
+    public function offsetExists( $offset ) : bool
     {
         return is_string($offset) ? isset( $this->_data[$offset] ) : false;
     }

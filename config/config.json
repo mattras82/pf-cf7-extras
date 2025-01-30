@@ -3,5 +3,6 @@
     "development": false,
     "production": true
   },
+  "version": "1.0.9",
   "wpcf7_includes": "all"
 }

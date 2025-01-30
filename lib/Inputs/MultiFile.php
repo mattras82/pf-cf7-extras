@@ -238,7 +238,7 @@ class MultiFile extends RunableAbstract
     public function add_tag_generator()
     {
         $tag_generator = WPCF7_TagGenerator::get_instance();
-        $tag_generator->add('multifile', __('multi-file', $this->get('textdomain')), [$this, 'tag_generator']);
+        $tag_generator->add('multifile', __('multi-file', $this->get('textdomain')), [$this, 'tag_generator'], ['version' => 2]);
     }
 
     public function tag_generator(WPCF7_ContactForm $contact_form, $args = '')
@@ -350,7 +350,7 @@ class MultiFile extends RunableAbstract
             $mailer_name = $mailer->name();
             if (in_array($mailer_name, $templates) && ($template = $contact_form->prop($mailer_name))) {
                 foreach ($this->uploaded_files as $tag_name => $files) {
-                    if (false !== strpos($template['attachments'], "[${tag_name}]")) {
+                    if (false !== strpos($template['attachments'], "[{$tag_name}]")) {
                         $components['attachments'] = array_merge($components['attachments'], $files);
                     }
                 }

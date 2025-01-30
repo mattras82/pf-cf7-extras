@@ -1,10 +1,18 @@
 # PublicFunction CF7 Extras Plugin #
 
- - Version 1.0.8
+ - Version 1.0.9
  
 ### WordPress plugin for adding additional functionality to the Contact Form 7 plugin. This includes extra validation, dynamic asset enqueueing, custom data sets for form fields, and more. ###
 
 ## Changelog ##
+
+### v.1.0.9
+
+Released on 30 Jan 2025
+
+ - Enhancement: Adding support for checkbox inputs in custom form settings
+ - Other: Fixing PHP 8+ deprecation notices
+ - Other: Fixing CF7 TagGenerator deprecation notices
 
 ### v.1.0.8
 

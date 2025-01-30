@@ -189,7 +189,7 @@ class GroupedSelect extends RunableAbstract
     public function add_tag_generator()
     {
         $tag_generator = WPCF7_TagGenerator::get_instance();
-        $tag_generator->add('grouped_select', __('grouped drop-down', $this->get('textdomain')), [$this, 'tag_generator']);
+        $tag_generator->add('grouped_select', __('grouped drop-down', $this->get('textdomain')), [$this, 'tag_generator'], ['version' => 2]);
     }
 
     public function tag_generator(WPCF7_ContactForm $contact_form, $args = '')

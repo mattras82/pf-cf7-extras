@@ -18,9 +18,9 @@ class Settings extends RunableAbstract
         parent::__construct($c);
     }
 
-    protected function get_settings()
+    protected function get_settings(\WPCF7_ContactForm $form)
     {
-        return apply_filters('pf_cf7_extras_settings', $this->settings);
+        return apply_filters('pf_cf7_extras_settings', $this->settings, $form);
     }
 
     protected function get_title()
@@ -30,7 +30,7 @@ class Settings extends RunableAbstract
 
     public function add_properties($properties, \WPCF7_ContactForm $form)
     {
-        foreach ($this->get_settings() as $key => $prop) {
+        foreach ($this->get_settings($form) as $key => $prop) {
             $properties[$key] = '';
             add_filter("wpcf7_contact_form_property_$key", function($val) use ($key) {
                 return isset($_POST[$key]) ? $_POST[$key] : $val;
@@ -54,7 +54,7 @@ class Settings extends RunableAbstract
         <h2><?= esc_html($this->get_title()) ?></h2>
         <fieldset>
             <legend>You can customize the settings below that apply to this contact form.</legend>
-            <?php foreach ($this->get_settings() as $id => $setting) {
+            <?php foreach ($this->get_settings($form) as $id => $setting) {
                 if (isset($setting['display'])) {
                     if (is_callable($setting['display'])) {
                         call_user_func($setting['display'], $id, $setting, $form->prop($id));
@@ -73,12 +73,7 @@ class Settings extends RunableAbstract
 
     private function generic_setting($id, $setting, $value = null, $label = null)
     {
-        if (!empty($setting['label'])) {
-            $label = $setting['label'];
-        }
-        if (!$label) {
-            $label = ucwords(str_replace('_', ' ', str_replace('pf_', 'PF ', $id)));
-        }
+        $label = $this->process_label($id, $setting, $label);
         $attr = [
             'value' => $value,
             'type'  => !empty($setting['type']) ? $setting['type'] : 'text',
@@ -86,16 +81,7 @@ class Settings extends RunableAbstract
             'name'  => $id,
             'class' => 'large-text'
         ];
-        if (!empty($setting['attr']) && is_array($setting['attr'])) {
-            foreach ($setting['attr'] as $name => $val) {
-                $attr[$name] = $val;
-            }
-        }
-        $attributes = '';
-        foreach ($attr as $a => $v) {
-            $v = esc_attr__($v, $this->get('textdomain'));
-            $attributes .= " {$a}=\"{$v}\"";
-        }
+        $attributes = $this->process_attributes($setting, $attr);
         $this->display_setting(
             $id,
             $label,
@@ -108,14 +94,69 @@ class Settings extends RunableAbstract
     {
         ?>
                 <div class="wpcf7-pf-setting wpcf7-pf-setting--<?= esc_attr($id) ?>">
+                    <?php if ($label) : ?>
                     <label for="<?= 'wpcf7-' . $id ?>"><strong><?= esc_html($label) ?></strong></label><br />
+                    <?php endif ?>
                     <?= $input_html ?>
+                    <?php if ($desc) : ?>
                     <p class="description"><?= $desc ?></p>
+                    <?php endif ?>
                 </div>
         <?php
     }
 
     private function textarea_setting($id, $setting, $value, $label = '')
+    {
+        $label = $this->process_label($id, $setting, $label);
+        $attr = [
+            'id'    => "wpcf7-$id",
+            'name'  => $id,
+            'class' => 'large-text',
+            'style' => 'min-height:100px'
+        ];
+        $attributes = $this->process_attributes($setting, $attr);
+        $this->display_setting(
+            $id,
+            $label,
+            sprintf('<textarea %s>%s</textarea>', $attributes, $value),
+            !empty($setting['desc']) ? $setting['desc'] : ''
+        );
+    }
+
+    private function checkbox_setting($id, $setting, $value, $label = '')
+    {
+        $label = $this->process_label($id, $setting, $label);
+        $attr = [
+            'value' => 'on',
+            'checked'   => $value == 'on' ? 'checked' : '',
+            'type'  => 'checkbox',
+            'id'    => 'wpcf7-' . $id,
+            'name'  => $id
+        ];
+        $attributes = $this->process_attributes($setting, $attr);
+        $this->display_setting(
+            $id,
+            null, // We're including the label in the input HTML below
+            sprintf('<label><strong>%s</strong><input %s/></label>', esc_html($label), $attributes),
+            !empty($setting['desc']) ? $setting['desc'] : ''
+        );
+    }
+
+    private function process_attributes($setting, $attr = [])
+    {
+        $attributes = '';if (!empty($setting['attr']) && is_array($setting['attr'])) {
+            foreach ($setting['attr'] as $name => $val) {
+                $attr[$name] = $val;
+            }
+        }
+        foreach ($attr as $a => $v) {
+            $v = esc_attr__($v, $this->get('textdomain'));
+            $attributes .= " {$a}=\"{$v}\"";
+        }
+        return $attributes;
+    }
+
+    private function process_label($id, $setting, $label)
     {
         if (!empty($setting['label'])) {
             $label = $setting['label'];
@@ -123,28 +164,7 @@ class Settings extends RunableAbstract
         if (!$label) {
             $label = ucwords(str_replace('_', ' ', str_replace('pf_', 'PF ', $id)));
         }
-        $attr = [
-            'id'    => "wpcf7-$id",
-            'name'  => $id,
-            'class' => 'large-text',
-            'style' => 'min-height:100px'
-        ];
-        if (!empty($setting['attr']) && is_array($setting['attr'])) {
-            foreach ($setting['attr'] as $name => $val) {
-                $attr[$name] = $val;
-            }
-        }
-        $attributes = '';
-        foreach ($attr as $a => $v) {
-            $v = esc_attr__($v, $this->get('textdomain'));
-            $attributes .= " {$a}=\"{$v}\"";
-        }
-        $this->display_setting(
-            $id,
-            $label,
-            sprintf('<textarea %s>%s</textarea>', $attributes, $value),
-            !empty($setting['desc']) ? $setting['desc'] : ''
-        );
+        return $label;
     }
 
     private function pf_redirect_display($value = null)
